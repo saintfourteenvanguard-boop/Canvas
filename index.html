@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Iterated Canvas 10 Layers</title>
+  <style>
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #f5f7fa;
+      font-family: system-ui, sans-serif;
+    }
+
+    .layer-label {
+      box-sizing: border-box;
+      padding: 6px 10px;
+      color: #334155;
+      background: #e2e8f0;
+      font-size: 12px;
+      line-height: 1.2;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 560px;
+      border: 1px solid #cbd5e1;
+      box-sizing: border-box;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Host this file at an HTTPS URL, then paste this into the Canvas HTML editor:
+
+    <iframe
+      src="https://YOUR-HOST.example/iterated-canvas-10-layers.html"
+      width="100%"
+      height="600"
+      title="Iterated Canvas page"
+      allowfullscreen>
+    </iframe>
+
+    Change ITERATION_COUNT below to control the default number of wrapper layers.
+    You can also temporarily override it with ?depth=5 in the URL.
+  -->
+
+  <div id="label" class="layer-label" aria-live="polite">Loading layer…</div>
+
+  <script>
+    (() => {
+      // Change this number to control the default number of wrapper layers.
+      // Keep it reasonable; very large values can make the browser slow.
+      const ITERATION_COUNT = 10;
+
+      const params = new URLSearchParams(window.location.search);
+      const requestedDepth = Number.parseInt(params.get("depth") || "", 10);
+      const depth = Number.isFinite(requestedDepth)
+        ? Math.max(0, requestedDepth)
+        : Math.max(0, ITERATION_COUNT);
+
+      const canvasUrl =
+        "https://byu.instructure.com/courses/36457/pages/assignment-types?module_item_id=3016511";
+
+      const label = document.getElementById("label");
+      const frame = document.createElement("iframe");
+      const nextUrl = depth > 0
+        ? `${window.location.origin}${window.location.pathname}?depth=${depth - 1}`
+        : canvasUrl;
+
+      label.textContent = depth > 0
+        ? `Wrapper layer active with ${depth} layers remaining`
+        : "Original Canvas page";
+
+      frame.src = nextUrl;
+      frame.title = depth > 0
+        ? `Nested wrapper layer with ${depth} layers remaining`
+        : "Original Canvas assignment types page";
+      frame.allowFullscreen = true;
+      frame.loading = "eager";
+      frame.referrerPolicy = "strict-origin-when-cross-origin";
+
+      document.body.appendChild(frame);
+    })();
+  </script>
+</body>
+</html>
